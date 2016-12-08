@@ -1,6 +1,6 @@
 src/
 test/
-examples/
+example/
 .babelrc
 .editorconfig
 .npmignore

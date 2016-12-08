@@ -1,5 +1,5 @@
 [ignore]
-<PROJECT_ROOT>/node_modules/.*
+.*/node_modules/.*
 
 [include]
 flow-typed/npm/react-redux_v4.x.x.js
