@@ -1,0 +1,14 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/.*
+
+[include]
+flow-typed/npm/react-redux_v4.x.x.js
+flow-typed/npm/redux_v3.x.x.js
+flow-typed/npm/enzyme_v2.3.x.js
+flow-typed/npm/jest_v17.x.x.js
+
+[libs]
+
+[options]
+esproposal.class_static_fields=enable
+esproposal.class_instance_fields=enable
