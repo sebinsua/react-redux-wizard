@@ -1,6 +1,6 @@
 {
   "name": "react-redux-wizard",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A simple wizard for React",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es",
@@ -13,7 +13,11 @@
   },
   "standard": {
     "parser": "babel-eslint",
-    "globals": [ "jest", "test", "expect" ]
+    "globals": [
+      "jest",
+      "test",
+      "expect"
+    ]
   },
   "directories": {
     "src": "src/**/*",
