@@ -3,6 +3,7 @@
 import type { Component, Element as ReactElement } from 'react'
 import type { Dispatch as ReduxDispatch, ActionCreator as ReduxActionCreator } from 'redux'
 import type { Connector as ReactReduxConnector } from 'react-redux'
+import type { JsonPredicate } from 'json-predicate'
 
 // React
 type FunctionComponent<P> = (props: P) => ?ReactElement<any>
@@ -13,12 +14,15 @@ type ReactChildren = ReactElement<*> | Array<ReactElement<*>>
 // Misc
 type KeyValueObject = { [key: string]: any }
 
-// Reducer
+// State Change
 type StepFn = (values: KeyValueObject, wizardState: WizardState) => ?string
+type StepPredicate = { predicate: JsonPredicate, to: string }
+
+// Reducer
 type StepConfiguration = {
   name: string,
   previous: ?string,
-  next: ?string | ?StepFn,
+  next: ?string | ?Array<StepPredicate> | ?StepFn,
   finish: boolean,
 }
 type WizardState = {
@@ -57,6 +61,8 @@ export type {
   ReduxActionCreator,
   ReactReduxConnector,
   KeyValueObject,
+  StepFn,
+  StepPredicate,
   StepConfiguration,
   WizardState,
   WizardsReducerState,

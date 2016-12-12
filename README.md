@@ -5,7 +5,7 @@
 
 ```js
 import React from 'react'
-import { Wizard, Step } from 'react-redux-wizard'
+import { Wizard, Step, match } from 'react-redux-wizard'
 
 const StepOne = ({ name, previous, next }) =>
   <div onClick={next}>{name}</div>
@@ -18,7 +18,14 @@ function SomeFormWizard () {
   return (
     <Wizard name="SomeFormWizard">
       <Step name="step-1" component={StepOne} next="step-2" />
-      <Step name="step-2" component={StepTwo} next={values => values.formValue === 'extra-flow' ? 'step-2.5' : 'step-3'} />
+      <Step
+        name="step-2"
+        component={StepTwo}
+        next={match('/formValue', {
+          'step-2.5': 'extra-flow', /* stepName <- value*/
+          'step-3': null /* stepName <- value*/
+        })}
+      />
       <Step name="step-2.5" component={StepTwo} next="step-3" />
       <Step name="step-3" component={StepThree} />
     </Wizard>
@@ -44,9 +51,13 @@ Your root reducer should use the `reducer` exported by this module against its `
 
 #### `<Wizard name={string}>{...steps}</Wizard>`
 
-#### `<Step name={string} component={YourReactComponent} previous={string} next={string|StepFn} />`
+#### `<Step name={string} component={YourReactComponent} previous={string} next={string|StepPredicate|StepFn} />`
 
-`StepFn` has the form `(values: KeyValueObject, wizardState: KeyValueObject) => ?string`
+`StepPredicate` is an `Array<{ predicate: JsonPredicate, to: string }>` where `JsonPredicate` [follows the JSON Predicate spec](https://github.com/MalcolmDwyer/json-predicate). `match(string, StepNameToValues)` is just sugar for generating these predicates when given some `Step` names and the associated `values` to check for at a `pathName`.
+
+We can pass a functions in but we really shouldn't as doing so means that the store can no longer be fully serialized. However, it is possible:
+
+> `StepFn` has the form `(values: KeyValueObject, wizardState: KeyValueObject) => ?string`
 and can be used to pick the next step depending on either the values emitted from a component,
 or some of the wizard's internal state.
 

@@ -1,4 +1,6 @@
 /* @flow */
+import { test } from 'json-predicate'
+
 import {
   INITIALIZE,
   REGISTER_STEP,
@@ -9,6 +11,8 @@ import {
 
 import type {
   KeyValueObject,
+  StepFn,
+  StepPredicate,
   StepConfiguration,
   WizardState,
   WizardsReducerState,
@@ -30,9 +34,21 @@ function computePreviousStep (currentStep: StepConfiguration, oldStack: Array<st
 }
 
 function computeNextStep (currentStep: StepConfiguration, values: KeyValueObject = {}, wizardState: WizardState): ?string {
-  // This can't be serialized correctly if it contains a function
-  // however we should be able to fix this in a later version.
-  return typeof currentStep.next === 'function' ? currentStep.next(values, wizardState) : currentStep.next
+  if (!currentStep.next) {
+    return null
+  } else if (Array.isArray(currentStep.next)) {
+    const stepPredicates: Array<StepPredicate> = currentStep.next
+    const stepPredicate: ?StepPredicate = stepPredicates.find(
+      ({ predicate }) => test(values, predicate)
+    )
+    return stepPredicate ? stepPredicate.to : null
+  } else if (typeof currentStep.next === 'function') {
+    const stepFn: StepFn = currentStep.next
+    return stepFn(values, wizardState)
+  } else if (typeof currentStep.next === 'string') {
+    const nextStep: string = currentStep.next
+    return nextStep
+  }
 }
 
 function rollbackStackTo (stepName: string, oldStack: Array<string> = []): Array<string> {

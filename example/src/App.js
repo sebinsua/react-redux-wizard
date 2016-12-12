@@ -55,8 +55,15 @@ class App extends Component {
       <div className='App'>
         <Wizard name='SomeFormWizard'>
           <Step name='step-one' component={StepOne} next='step-two' />
-          <Step name='step-two' component={StepTwo} next='step-three' />
-          <Step name='step-three' component={StepThree} next={values => values.choice ? `finish-${values.choice}` : null} />
+          <Step name='step-two' component={StepTwo} next={() => 'step-three'} />
+          <Step
+            name='step-three'
+            component={StepThree}
+            next={[
+              { predicate: { op: 'test', path: '/choice', value: 'a' }, to: 'finish-a' },
+              { predicate: { op: 'test', path: '/choice', value: 'b' }, to: 'finish-b' }
+            ]}
+          />
           <Step name='finish-a' component={Finish} previous='step-one' />
           <Step name='finish-b' component={Finish} />
         </Wizard>
