@@ -7,27 +7,43 @@ import {
   DESTROY
 } from './actionTypes'
 
-import type { WizardsReducerState, WizardActions } from './types'
+import type {
+  KeyValueObject,
+  StepConfiguration,
+  WizardState,
+  WizardsReducerState,
+  WizardActions
+} from './types'
 
 export const NAME = 'wizards'
 
 export const initialState = {}
 
-function getCurrentStep (name, state) {
-  const wizardState = state[name] || {}
+function getCurrentStep (name: string, state: WizardsReducerState = {}): StepConfiguration {
+  const wizardState: WizardState = state[name] || {}
   const currentStep = wizardState.currentStep
   return wizardState.steps[currentStep]
 }
 
-function rollbackStackTo (stepName, stack = []) {
-  const newStack = [ ...stack ]
+function computePreviousStep (currentStep: StepConfiguration, oldStack: Array<string> = []): ?string {
+  return currentStep.previous || oldStack[oldStack.length - 2]
+}
+
+function computeNextStep (currentStep: StepConfiguration, values: KeyValueObject = {}, wizardState: WizardState): ?string {
+  // This can't be serialized correctly if it contains a function
+  // however we should be able to fix this in a later version.
+  return typeof currentStep.next === 'function' ? currentStep.next(values, wizardState) : currentStep.next
+}
+
+function rollbackStackTo (stepName: string, oldStack: Array<string> = []): Array<string> {
+  const newStack = [ ...oldStack ]
   while (newStack.length !== 0) {
     const lastStep = newStack.pop()
     if (lastStep === stepName) {
       return [ ...newStack, stepName ]
     }
   }
-  return [ ...stack, stepName ]
+  return [ ...oldStack, stepName ]
 }
 
 export default function wizards (
@@ -66,9 +82,12 @@ export default function wizards (
     case PREVIOUS_STEP: {
       const { name } = action.payload || {}
       const currentStep = getCurrentStep(name, state)
-      const oldStack = state[name].stack
-      const previousStep = currentStep.previous || oldStack[oldStack.length - 2]
-      const stack = rollbackStackTo(previousStep, oldStack)
+      const previousStep = computePreviousStep(currentStep, state[name].stack)
+      if (!previousStep) {
+        console.error(`${name} could not progress because the previousStep was null`)
+        return state
+      }
+      const stack = rollbackStackTo(previousStep, state[name].stack)
       return {
         ...state,
         [name]: {
@@ -79,15 +98,13 @@ export default function wizards (
       }
     }
     case NEXT_STEP: {
-      const { name, values = {} } = action.payload || {}
+      const { name, values } = action.payload || {}
       const currentStep = getCurrentStep(name, state)
       if (currentStep.finish) {
         console.error(`${name} could not progress because it is finished`)
         return state
       }
-      // This can't be serialized correctly if it contains a function
-      // however we should be able to fix this in a later version.
-      const nextStep = typeof currentStep.next === 'function' ? currentStep.next(values, state[name] || {}) : currentStep.next
+      const nextStep = computeNextStep(currentStep, values, state[name])
       if (!nextStep) {
         console.error(`${name} could not progress because the nextStep was null`)
         return state

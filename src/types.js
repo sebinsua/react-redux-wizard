@@ -14,21 +14,22 @@ type ReactChildren = ReactElement<*> | Array<ReactElement<*>>
 type KeyValueObject = { [key: string]: any }
 
 // Reducer
-type StepFn = (values: KeyValueObject, wizardState: KeyValueObject) => ?string
+type StepFn = (values: KeyValueObject, wizardState: WizardState) => ?string
 type StepConfiguration = {
   name: string,
   previous: ?string,
   next: ?string | ?StepFn,
   finish: boolean,
 }
+type WizardState = {
+  currentStep: string,
+  stack: Array<string>,
+  steps: {
+    [key: string]: StepConfiguration
+  },
+}
 type WizardsReducerState = {
-  [key: string]: {
-    currentStep: string,
-    stack: Array<string>,
-    steps: {
-      [key: string]: StepConfiguration
-    },
-  }
+  [key: string]: WizardState
 }
 
 // Actions
@@ -57,6 +58,7 @@ export type {
   ReactReduxConnector,
   KeyValueObject,
   StepConfiguration,
+  WizardState,
   WizardsReducerState,
   InitializeWizardAction,
   RegisterStepAction,
