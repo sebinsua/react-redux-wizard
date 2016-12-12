@@ -1,6 +1,10 @@
 # `react-redux-wizard` [![Build Status](https://travis-ci.org/sebinsua/react-redux-wizard.png)](https://travis-ci.org/sebinsua/react-redux-wizard) [![npm version](https://badge.fury.io/js/react-redux-wizard.svg)](https://npmjs.org/package/react-redux-wizard)
 > A simple wizard for React.
 
+This component allows you to represent the flow of a wizard with JSX.
+
+NOTE: I have not worked on an integration with a React router, so if you require deep-linking I would not recommend using it yet. It is however completely functional for wizards within modals, and for small sign-up wizards, etc.
+
 ## Example
 
 ```js
