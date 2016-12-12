@@ -10,6 +10,7 @@ type StepProps = {
   handlePrevious: () => void,
   handleNext: (values: KeyValueObject) => void,
   finish: boolean,
+  stack: Array<string>,
   component?: ReactComponent,
 }
 
@@ -18,6 +19,7 @@ export const Step = ({
   handlePrevious,
   handleNext,
   finish,
+  stack,
   component: StepComponent
 }: StepProps) => (
   <StepComponent
@@ -25,6 +27,7 @@ export const Step = ({
     previous={handlePrevious}
     next={handleNext}
     finish={finish}
+    stack={stack}
   />
 )
 

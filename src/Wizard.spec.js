@@ -38,7 +38,8 @@ test('mapStateToProps() generates valid props', () => {
             next: 'step-two',
             finish: false
           }
-        }
+        },
+        stack: [ 'step-one' ]
       }
     }
   }
@@ -50,7 +51,8 @@ test('mapStateToProps() generates valid props', () => {
         previous: null,
         next: 'step-two',
         finish: false
-      }
+      },
+      stack: [ 'step-one' ]
     })
 })
 
@@ -98,7 +100,7 @@ test('Wizard will register the steps on mount', () => {
     'some-wizard',
     {
       name: 'step-two',
-      previous: 'step-one',
+      previous: undefined,
       next: 'step-three',
       finish: false
     }
@@ -141,7 +143,7 @@ test('Wizard will show current step, when there is a match', () => {
     .toBe(wizardInstance.handleNext)
 })
 
-test('Wizard will not send in handlePrevious or handelProceed if a step is missing both previous and next', () => {
+test('Wizard will not send in handlePrevious or handleProceed if a step is missing both previous and next', () => {
   const props = createProps()
   const currentStepConfiguration = {
     name: 'step-one',
@@ -149,8 +151,9 @@ test('Wizard will not send in handlePrevious or handelProceed if a step is missi
     next: null,
     finish: true
   }
+  const stack = [ 'step-one' ]
   const component = mount(
-    <Wizard currentStepConfiguration={currentStepConfiguration} {...props}>
+    <Wizard currentStepConfiguration={currentStepConfiguration} stack={stack} {...props}>
       <Step name='step-one' component={StepOne} />
     </Wizard>
   )

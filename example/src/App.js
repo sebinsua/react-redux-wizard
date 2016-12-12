@@ -57,8 +57,8 @@ class App extends Component {
           <Step name='step-one' component={StepOne} next='step-two' />
           <Step name='step-two' component={StepTwo} next='step-three' />
           <Step name='step-three' component={StepThree} next={values => values.choice ? `finish-${values.choice}` : null} />
-          <Step name='finish-a' component={Finish} previous='step-two' />
-          <Step name='finish-b' component={Finish} previous='step-three' />
+          <Step name='finish-a' component={Finish} previous='step-one' />
+          <Step name='finish-b' component={Finish} />
         </Wizard>
       </div>
     )

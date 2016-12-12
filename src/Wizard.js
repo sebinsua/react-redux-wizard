@@ -25,6 +25,7 @@ type ConnectedWizardProps = {
 type WizardProps = {
   name: string,
   currentStepConfiguration: ?StepConfiguration,
+  stack: Array<string>,
   initialize: typeof initializeWizard,
   register: typeof registerStep,
   previous: typeof previousStep,
@@ -45,18 +46,13 @@ export class Wizard extends Component {
     const firstStep = possibleSteps.length ? (possibleSteps[0].props || {}).name : null
     initialize(name, firstStep)
 
-    // Ensure steps are registered with previous states when not supplied.
-    let previousStepName
     possibleSteps.forEach(
-      ({ props = {} }) => {
-        register(name, {
-          name: props.name,
-          previous: props.previous || previousStepName,
-          next: props.next,
-          finish: !props.next
-        })
-        previousStepName = props.name
-      }
+      ({ props = {} }) => register(name, {
+        name: props.name,
+        previous: props.previous,
+        next: props.next,
+        finish: !props.next
+      })
     )
   }
 
@@ -75,15 +71,18 @@ export class Wizard extends Component {
     next(name, values)
   }
 
-  getCurrentStep = (currentStepConfiguration: StepConfiguration): ?ReactElement => {
+  getCurrentStep = (currentStepConfiguration: StepConfiguration, stack: Array<string>): ?ReactElement => {
     const { children } = this.props
 
     const possibleSteps = React.Children.toArray(children)
     const currentStep = possibleSteps.find(ps => ps.props.name === currentStepConfiguration.name)
     if (React.isValidElement(currentStep)) {
+      const hasPrevious = currentStepConfiguration.previous || stack.length > 1
+      const hasNext = !!currentStepConfiguration.next
       return React.cloneElement(currentStep, {
-        handlePrevious: currentStepConfiguration.previous && this.handlePrevious,
-        handleNext: currentStepConfiguration.next && this.handleNext
+        stack,
+        handlePrevious: hasPrevious ? this.handlePrevious : null,
+        handleNext: hasNext ? this.handleNext : null
       })
     }
 
@@ -91,8 +90,8 @@ export class Wizard extends Component {
   }
 
   render () {
-    const { currentStepConfiguration } = this.props
-    return currentStepConfiguration ? this.getCurrentStep(currentStepConfiguration) : null
+    const { currentStepConfiguration, stack = [] } = this.props
+    return currentStepConfiguration ? this.getCurrentStep(currentStepConfiguration, stack) : null
   }
 
 }
@@ -111,12 +110,12 @@ export function mapStateToProps (
   const wizardsState: WizardsReducerState = state[reducerKey]
 
   const name = ownProps.name
-  const { currentStep, steps = {} } = wizardsState[name] || {}
+  const { currentStep, steps = {}, stack = [] } = wizardsState[name] || {}
   const currentStepConfiguration: ?StepConfiguration = steps[currentStep]
-
   return {
     name,
-    currentStepConfiguration
+    currentStepConfiguration,
+    stack
   }
 }
 

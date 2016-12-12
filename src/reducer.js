@@ -66,8 +66,9 @@ export default function wizards (
     case PREVIOUS_STEP: {
       const { name } = action.payload || {}
       const currentStep = getCurrentStep(name, state)
-      const previousStep = currentStep.previous
-      const stack = rollbackStackTo(previousStep, state[name].stack)
+      const oldStack = state[name].stack
+      const previousStep = currentStep.previous || oldStack[oldStack.length - 2]
+      const stack = rollbackStackTo(previousStep, oldStack)
       return {
         ...state,
         [name]: {
@@ -91,7 +92,8 @@ export default function wizards (
         console.error(`${name} could not progress because the nextStep was null`)
         return state
       }
-      const stack = [ ...state[name].stack, nextStep ]
+      const oldStack = state[name].stack
+      const stack = [ ...oldStack, nextStep ]
       return {
         ...state,
         [name]: {
