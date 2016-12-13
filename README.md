@@ -3,7 +3,7 @@
 
 This component allows you to represent the flow of a wizard with JSX.
 
-NOTE: I have not worked on an integration with a React router, so if you require deep-linking I would not recommend using it yet. It is however completely functional for wizards within modals, and for small sign-up wizards, etc.
+NOTE: I have not worked on an integration with a React router, so if you require deep-linking I would not yet recommend using it. It is however completely functional for wizards within modals, and for small sign-up wizards, etc. It might be interesting later on, to see if I can [use `Match#render` to integrate it with `react-router#v4`](https://react-router.now.sh/Match).
 
 ## Example
 
