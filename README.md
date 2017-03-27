@@ -3,7 +3,7 @@
 
 This component allows you to represent the flow of a wizard with JSX.
 
-> **NOTE:** I have not worked on an integration with a React router, so if you require [deep-linking](https://en.wikipedia.org/wiki/Deep_linking) it's not quite ready. It is however completely functional for wizards within modals, and for small sign-up wizards, etc. Once `react-router#v4` is stable I should be able to [use `Match#render` and `Router.transitionTo` to get deep linking working again](https://react-router.now.sh/Match).
+> **NOTE:** I have not worked on an integration with a React router, so if you require [deep-linking](https://en.wikipedia.org/wiki/Deep_linking) it's not quite ready. It is however completely functional for wizards within modals, and for small sign-up wizards, etc.
 
 ## Example
 
